@@ -1,4 +1,4 @@
-# 🐍 Snake Game – React Application
+#  Snake Game – React Application
 
 A modern implementation of the classic **Snake Game** built using **React**.  
 This project focuses on applying core React concepts to a real-time, interactive game scenario.
@@ -7,7 +7,7 @@ It demonstrates state management, keyboard event handling, game loop logic, and 
 
 ---
 
-## ✨ Features
+##  Features
 
 - Classic Snake gameplay
 - Real-time score tracking
@@ -28,15 +28,14 @@ It demonstrates state management, keyboard event handling, game loop logic, and 
 
 ---
 
-## 📷 Preview
+##  Preview
 
-![Snake Game Screenshot](./screenshot.png)
+<img width="857" height="621" alt="Screenshot 2025-12-21 150323" src="https://github.com/user-attachments/assets/c0098d90-2e52-4351-8c06-0eb481e6b28e" />
 
-> *(Add your game screenshot to the repository and name it `screenshot.png`)*
 
 ---
 
-## 🚀 Installation & Setup
+##  Installation & Setup
 
 Follow the steps below to run the project locally.
 
