@@ -19,7 +19,7 @@ It demonstrates state management, keyboard event handling, game loop logic, and 
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **React**
 - **JavaScript (ES6+)**
@@ -42,3 +42,30 @@ Follow the steps below to run the project locally.
 ### 1. Clone the repository
 ```bash
 git clone https://github.com/Mohan24th/react-snake-game.git
+```
+
+### 2. Navigate to the project directory
+```cd react-snake-game```
+
+### 3. Install project dependencies
+```npm install```
+
+### 4. Start the development server
+```npm run dev```
+or, if using Create React App:
+
+```npm start```
+
+### 5. Open the application in your browser
+```http://localhost:3000```
+
+---
+## How to Play
+
+- Use the Arrow Keys to control the snake’s movement
+
+- Eat the food to increase your score
+
+- Avoid collisions with walls and the snake’s own body
+
+- Use Pause, Resume, and Restart buttons to control gameplay
