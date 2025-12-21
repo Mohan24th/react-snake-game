@@ -1,0 +1,33 @@
+body {
+  font-family: sans-serif;
+  background: #111;
+  color: white;
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.container {
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  background: #222;
+  border: 2px solid #555;
+}
+
+.cell {
+  width: 20px;
+  height: 20px;
+  border: 1px solid #333;
+}
+
+.snake {
+  background: limegreen;
+}
+
+.food {
+  background: red;
+  border-radius: 50%;
+}
