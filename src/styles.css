@@ -31,3 +31,32 @@ body {
   background: red;
   border-radius: 50%;
 }
+
+.controls {
+  margin-top: 12px;
+}
+
+.btn {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  margin: 0 6px;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.9;
+}
+
+.btn.danger {
+  background: #e53935;
+}
+
+.hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #aaa;
+}

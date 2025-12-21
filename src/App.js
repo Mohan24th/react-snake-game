@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import Board from "./components/Board";
+import Score from "./components/Score";
+import Controls from "./components/Controls";
 import "./styles.css";
 
 export default function App() {
@@ -28,11 +31,11 @@ export default function App() {
     setPaused(false);
   }
 
-  // 🎮 Keyboard controls
+  // Keyboard controls
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === " ") {
-        setPaused((prev) => !prev);
+        setPaused((p) => !p);
         return;
       }
 
@@ -49,7 +52,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // 🕒 Game loop
+  // Game loop
   useEffect(() => {
     if (gameOver || paused) return;
 
@@ -63,7 +66,7 @@ export default function App() {
         if (direction === "UP") newHead = { x: head.x, y: head.y - 1 };
         if (direction === "DOWN") newHead = { x: head.x, y: head.y + 1 };
 
-        // ❌ Wall collision
+        // wall collision
         if (
           newHead.x < 0 ||
           newHead.x >= cols ||
@@ -74,20 +77,18 @@ export default function App() {
           return prevSnake;
         }
 
-        // ❌ Self collision
+        // self collision
         if (
-          prevSnake.some(
-            (segment) => segment.x === newHead.x && segment.y === newHead.y
-          )
+          prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)
         ) {
           setGameOver(true);
           return prevSnake;
         }
 
-        // 🍎 Eat food
+        // eat food
         if (newHead.x === food.x && newHead.y === food.y) {
           setFood(generateFood());
-          setScore((prev) => prev + 1);
+          setScore((s) => s + 1);
           return [newHead, ...prevSnake];
         }
 
@@ -96,49 +97,23 @@ export default function App() {
     }, 300);
 
     return () => clearInterval(interval);
-  }, [direction, food, gameOver, paused]);
+  }, [direction, food, paused, gameOver]);
 
   return (
     <div className="container">
       <h1>🐍 Snake Game</h1>
-      <h3>Score: {score}</h3>
 
-      {paused && !gameOver && <h3>⏸️ Paused</h3>}
-      {gameOver && <h2>❌ Game Over</h2>}
+      <Score score={score} paused={paused} gameOver={gameOver} />
 
-      <div
-        className="board"
-        style={{
-          gridTemplateRows: `repeat(${rows}, 20px)`,
-          gridTemplateColumns: `repeat(${cols}, 20px)`,
-        }}
-      >
-        {Array.from({ length: rows * cols }).map((_, index) => {
-          const x = index % cols;
-          const y = Math.floor(index / cols);
+      <Board rows={rows} cols={cols} snake={snake} food={food} />
 
-          const isSnake = snake.some(
-            (segment) => segment.x === x && segment.y === y
-          );
-          const isFood = food.x === x && food.y === y;
+      <Controls
+        paused={paused}
+        onPause={() => setPaused((p) => !p)}
+        onRestart={resetGame}
+      />
 
-          return (
-            <div
-              key={index}
-              className={`cell ${isSnake ? "snake" : isFood ? "food" : ""}`}
-            />
-          );
-        })}
-      </div>
-
-      <div style={{ marginTop: "10px" }}>
-        <button onClick={() => setPaused((p) => !p)}>
-          {paused ? "Resume" : "Pause"}
-        </button>
-        <button onClick={resetGame} style={{ marginLeft: "10px" }}>
-          Restart
-        </button>
-      </div>
+      <p className="hint">Arrow Keys | Space = Pause</p>
     </div>
   );
 }
