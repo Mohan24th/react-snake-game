@@ -5,8 +5,15 @@ This project focuses on applying core React concepts to a real-time, interactive
 
 It demonstrates state management, keyboard event handling, game loop logic, and clean component-based design.
 
----
 
+
+---
+##  Live Demo
+
+🔗 **Play here:** https://react-snake-game-henna.vercel.app/
+
+
+---
 ##  Features
 
 - Classic Snake gameplay
