@@ -12,6 +12,10 @@ export default function App() {
   const [gameOver, setGameOver] = useState(false);
   const [paused, setPaused] = useState(false);
 
+  // 📏 Responsive board size
+  const maxBoardSize = Math.min(window.innerWidth, window.innerHeight) * 0.6;
+  const cellSize = Math.floor(maxBoardSize / cols);
+
   function generateFood() {
     return {
       x: Math.floor(Math.random() * cols),
@@ -28,7 +32,7 @@ export default function App() {
     setPaused(false);
   }
 
-  //  Safe direction change
+  // 🎯 Safe direction
   const changeDirection = (newDir) => {
     setDirection((prev) => {
       if (newDir === "UP" && prev !== "DOWN") return "UP";
@@ -39,14 +43,13 @@ export default function App() {
     });
   };
 
-  //  Keyboard
+  // 🎮 Keyboard
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === " ") {
         setPaused((p) => !p);
         return;
       }
-
       if (e.key === "ArrowUp") changeDirection("UP");
       if (e.key === "ArrowDown") changeDirection("DOWN");
       if (e.key === "ArrowLeft") changeDirection("LEFT");
@@ -57,15 +60,13 @@ export default function App() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  //  Game Loop
+  // 🕒 Game Loop
   useEffect(() => {
     if (gameOver || paused) return;
 
     const interval = setInterval(() => {
       setSnake((prevSnake) => {
         const head = prevSnake[0];
-
-        // always create NEW object
         let newHead = { ...head };
 
         if (direction === "RIGHT") newHead.x += 1;
@@ -73,7 +74,7 @@ export default function App() {
         if (direction === "UP") newHead.y -= 1;
         if (direction === "DOWN") newHead.y += 1;
 
-        //  Wall collision
+        // Wall collision
         if (
           newHead.x < 0 ||
           newHead.x >= cols ||
@@ -84,15 +85,17 @@ export default function App() {
           return prevSnake;
         }
 
-        //  Self collision
+        // Self collision
         if (
-          prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)
+          prevSnake.some(
+            (seg) => seg.x === newHead.x && seg.y === newHead.y
+          )
         ) {
           setGameOver(true);
           return prevSnake;
         }
 
-        //  Eat food
+        // Eat food
         if (newHead.x === food.x && newHead.y === food.y) {
           setFood(generateFood());
           setScore((prev) => prev + 1);
@@ -101,31 +104,33 @@ export default function App() {
 
         return [newHead, ...prevSnake.slice(0, -1)];
       });
-    }, 300);
+    }, 250);
 
     return () => clearInterval(interval);
   }, [direction, food, gameOver, paused]);
 
   return (
     <div className="container">
-      <h1> SNAKE GAME</h1>
+      <h1>🐍 Snake Game</h1>
       <h3>Score: {score}</h3>
 
-      {paused && !gameOver && <h3>⏸️ Paused</h3>}
-      {gameOver && <h2 className="game-over"> Game Over</h2>}
+      {paused && !gameOver && <h3>⏸️ Game Paused</h3>}
+      {gameOver && <h2 className="game-over">❌ Game Over</h2>}
 
       <div
         className="board"
         style={{
-          gridTemplateRows: `repeat(${rows}, 20px)`,
-          gridTemplateColumns: `repeat(${cols}, 20px)`,
+          gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
+          gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`
         }}
       >
         {Array.from({ length: rows * cols }).map((_, index) => {
           const x = index % cols;
           const y = Math.floor(index / cols);
 
-          const isSnake = snake.some((seg) => seg.x === x && seg.y === y);
+          const isSnake = snake.some(
+            (seg) => seg.x === x && seg.y === y
+          );
           const isFood = food.x === x && food.y === y;
 
           return (
@@ -137,7 +142,7 @@ export default function App() {
         })}
       </div>
 
-      {/* 📱 Mobile Controls */}
+      {/* Controls */}
       <div className="controls">
         <button onClick={() => changeDirection("UP")}>⬆️</button>
         <div>
@@ -147,14 +152,17 @@ export default function App() {
         </div>
       </div>
 
-      {/*  Buttons */}
+      {/* Actions */}
       <div className="actions">
-        <button className="pause-btn" onClick={() => setPaused((p) => !p)}>
-          {paused ? "▶ Resume Game" : "⏸ Pause Game"}
+        <button
+          className="pause-btn"
+          onClick={() => setPaused((p) => !p)}
+        >
+          {paused ? "▶ Resume" : "⏸ Pause"}
         </button>
 
         <button className="restart-btn" onClick={resetGame}>
-          🔄 Restart Game
+          🔄 Restart
         </button>
       </div>
     </div>
