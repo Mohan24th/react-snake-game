@@ -1,7 +1,4 @@
 import { useState, useEffect } from "react";
-import Board from "./components/Board";
-import Score from "./components/Score";
-import Controls from "./components/Controls";
 import "./styles.css";
 
 export default function App() {
@@ -31,7 +28,18 @@ export default function App() {
     setPaused(false);
   }
 
-  // Keyboard controls
+  //  Safe direction change
+  const changeDirection = (newDir) => {
+    setDirection((prev) => {
+      if (newDir === "UP" && prev !== "DOWN") return "UP";
+      if (newDir === "DOWN" && prev !== "UP") return "DOWN";
+      if (newDir === "LEFT" && prev !== "RIGHT") return "LEFT";
+      if (newDir === "RIGHT" && prev !== "LEFT") return "RIGHT";
+      return prev;
+    });
+  };
+
+  //  Keyboard
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === " ") {
@@ -39,34 +47,33 @@ export default function App() {
         return;
       }
 
-      setDirection((prev) => {
-        if (e.key === "ArrowUp" && prev !== "DOWN") return "UP";
-        if (e.key === "ArrowDown" && prev !== "UP") return "DOWN";
-        if (e.key === "ArrowLeft" && prev !== "RIGHT") return "LEFT";
-        if (e.key === "ArrowRight" && prev !== "LEFT") return "RIGHT";
-        return prev;
-      });
+      if (e.key === "ArrowUp") changeDirection("UP");
+      if (e.key === "ArrowDown") changeDirection("DOWN");
+      if (e.key === "ArrowLeft") changeDirection("LEFT");
+      if (e.key === "ArrowRight") changeDirection("RIGHT");
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Game loop
+  //  Game Loop
   useEffect(() => {
     if (gameOver || paused) return;
 
     const interval = setInterval(() => {
       setSnake((prevSnake) => {
         const head = prevSnake[0];
-        let newHead = head;
 
-        if (direction === "RIGHT") newHead = { x: head.x + 1, y: head.y };
-        if (direction === "LEFT") newHead = { x: head.x - 1, y: head.y };
-        if (direction === "UP") newHead = { x: head.x, y: head.y - 1 };
-        if (direction === "DOWN") newHead = { x: head.x, y: head.y + 1 };
+        // always create NEW object
+        let newHead = { ...head };
 
-        // wall collision
+        if (direction === "RIGHT") newHead.x += 1;
+        if (direction === "LEFT") newHead.x -= 1;
+        if (direction === "UP") newHead.y -= 1;
+        if (direction === "DOWN") newHead.y += 1;
+
+        //  Wall collision
         if (
           newHead.x < 0 ||
           newHead.x >= cols ||
@@ -77,7 +84,7 @@ export default function App() {
           return prevSnake;
         }
 
-        // self collision
+        //  Self collision
         if (
           prevSnake.some((seg) => seg.x === newHead.x && seg.y === newHead.y)
         ) {
@@ -85,10 +92,10 @@ export default function App() {
           return prevSnake;
         }
 
-        // eat food
+        //  Eat food
         if (newHead.x === food.x && newHead.y === food.y) {
           setFood(generateFood());
-          setScore((s) => s + 1);
+          setScore((prev) => prev + 1);
           return [newHead, ...prevSnake];
         }
 
@@ -97,23 +104,59 @@ export default function App() {
     }, 300);
 
     return () => clearInterval(interval);
-  }, [direction, food, paused, gameOver]);
+  }, [direction, food, gameOver, paused]);
 
   return (
     <div className="container">
-      <h1>🐍 Snake Game</h1>
+      <h1> SNAKE GAME</h1>
+      <h3>Score: {score}</h3>
 
-      <Score score={score} paused={paused} gameOver={gameOver} />
+      {paused && !gameOver && <h3>⏸️ Paused</h3>}
+      {gameOver && <h2 className="game-over"> Game Over</h2>}
 
-      <Board rows={rows} cols={cols} snake={snake} food={food} />
+      <div
+        className="board"
+        style={{
+          gridTemplateRows: `repeat(${rows}, 20px)`,
+          gridTemplateColumns: `repeat(${cols}, 20px)`,
+        }}
+      >
+        {Array.from({ length: rows * cols }).map((_, index) => {
+          const x = index % cols;
+          const y = Math.floor(index / cols);
 
-      <Controls
-        paused={paused}
-        onPause={() => setPaused((p) => !p)}
-        onRestart={resetGame}
-      />
+          const isSnake = snake.some((seg) => seg.x === x && seg.y === y);
+          const isFood = food.x === x && food.y === y;
 
-      <p className="hint">Arrow Keys | Space = Pause</p>
+          return (
+            <div
+              key={index}
+              className={`cell ${isSnake ? "snake" : isFood ? "food" : ""}`}
+            />
+          );
+        })}
+      </div>
+
+      {/* 📱 Mobile Controls */}
+      <div className="controls">
+        <button onClick={() => changeDirection("UP")}>⬆️</button>
+        <div>
+          <button onClick={() => changeDirection("LEFT")}>⬅️</button>
+          <button onClick={() => changeDirection("DOWN")}>⬇️</button>
+          <button onClick={() => changeDirection("RIGHT")}>➡️</button>
+        </div>
+      </div>
+
+      {/*  Buttons */}
+      <div className="actions">
+        <button className="pause-btn" onClick={() => setPaused((p) => !p)}>
+          {paused ? "▶ Resume Game" : "⏸ Pause Game"}
+        </button>
+
+        <button className="restart-btn" onClick={resetGame}>
+          🔄 Restart Game
+        </button>
+      </div>
     </div>
   );
 }
